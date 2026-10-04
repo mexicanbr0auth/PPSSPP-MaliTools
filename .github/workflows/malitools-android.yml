@@ -1,0 +1,27 @@
+name: PPSSPP MaliTools Android
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK and NDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-37" "build-tools;35.0.0" "ndk;29.0.14206865" "cmake;3.22.1"
+      - name: Build PPSSPP MaliTools
+        run: ./gradlew :android:assembleNormalDebug --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PPSSPP-MaliTools
+          path: android/build/outputs/apk/normal/debug/*.apk

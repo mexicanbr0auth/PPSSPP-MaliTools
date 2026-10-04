@@ -16,8 +16,13 @@ jobs:
           java-version: '17'
       - name: Install Android SDK and NDK
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-37" "build-tools;35.0.0" "ndk;29.0.14206865" "cmake;3.22.1"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -1)"
+          fi
+          echo "Using $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platforms;android-37" "build-tools;35.0.0" "ndk;29.0.14206865" "cmake;3.22.1"
       - name: Build PPSSPP MaliTools
         run: ./gradlew :android:assembleNormalDebug --stacktrace
       - uses: actions/upload-artifact@v4

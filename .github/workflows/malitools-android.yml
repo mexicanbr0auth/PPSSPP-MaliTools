@@ -24,7 +24,7 @@ jobs:
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.14206865" "cmake;3.22.1"
       - name: Build PPSSPP MaliTools
-        run: ./gradlew :android:assembleNormalDebug --stacktrace
+        run: ./gradlew :android:assembleNormalDebug -PANDROID_VERSION_CODE=100000001 -PANDROID_VERSION_NAME=1.20.0-malitools --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: PPSSPP-MaliTools

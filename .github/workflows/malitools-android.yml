@@ -25,7 +25,7 @@ jobs:
           "$SDKMANAGER" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.14206865" "cmake;3.22.1"
       - name: Build PPSSPP MaliTools
         run: ./gradlew :android:assembleNormalDebug --stacktrace
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: PPSSPP-MaliTools
           path: android/build/outputs/apk/normal/debug/*.apk

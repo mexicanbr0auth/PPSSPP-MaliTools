@@ -102,7 +102,7 @@ android {
 		}
 	}
 
-	compileSdk = 37
+	compileSdk = 36
 	ndkVersion = "29.0.14206865"
 
 	compileOptions {
@@ -128,7 +128,7 @@ android {
 		file("versioncode.txt").writeText(gitVersionCode.toString())
 
 		minSdk = 21
-		targetSdk = 37
+		targetSdk = 36
 		if (project.hasProperty("ANDROID_VERSION_CODE") && project.hasProperty("ANDROID_VERSION_NAME")) {
 			versionCode = (project.property("ANDROID_VERSION_CODE") as String).toInt()
 			versionName = project.property("ANDROID_VERSION_NAME") as String

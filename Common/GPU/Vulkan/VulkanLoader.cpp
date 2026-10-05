@@ -385,11 +385,16 @@ static VulkanLibraryHandle VulkanLoadLibrary(std::string *errorString) {
 			File::CreateDir(tempDir);
 			File::CreateDir(fileRedirectDir);
 
+			const bool isPanVK = driverLibName.find("panfrost") != std::string::npos || driverLibName.find("panvk") != std::string::npos;
+			const int driverFlags = isPanVK ? ADRENOTOOLS_DRIVER_CUSTOM : (ADRENOTOOLS_DRIVER_FILE_REDIRECT | ADRENOTOOLS_DRIVER_CUSTOM);
+			INFO_LOG(Log::G3D, "MaliTools: loading custom Vulkan driver name='%s' library='%s' PanVK=%d flags=0x%x",
+				g_Config.sCustomDriver.c_str(), driverLibName.c_str(), isPanVK ? 1 : 0, driverFlags);
+
 			lib = adrenotools_open_libvulkan(
-				RTLD_NOW | RTLD_LOCAL, ADRENOTOOLS_DRIVER_FILE_REDIRECT | ADRENOTOOLS_DRIVER_CUSTOM,
+				RTLD_NOW | RTLD_LOCAL, driverFlags,
 				(std::string(tempDir.c_str()) + "/").c_str(), g_nativeLibDir.c_str(),
 				(std::string(driverPath.c_str()) + "/").c_str(), driverLibName.c_str(),
-				(std::string(fileRedirectDir.c_str()) + "/").c_str(), nullptr);
+				isPanVK ? nullptr : (std::string(fileRedirectDir.c_str()) + "/").c_str(), nullptr);
 			if (!lib) {
 				ERROR_LOG(Log::G3D, "Failed to load custom driver with AdrenoTools ('%s')", g_Config.sCustomDriver.c_str());
 				*errorString = "Failed to load custom driver";
@@ -684,6 +689,10 @@ bool VulkanLoad(std::string *errorStr) {
 	LOAD_GLOBAL_FUNC(vkEnumerateInstanceVersion);
 	LOAD_GLOBAL_FUNC(vkEnumerateInstanceExtensionProperties);
 	LOAD_GLOBAL_FUNC(vkEnumerateInstanceLayerProperties);
+
+	INFO_LOG(Log::G3D, "MaliTools: Vulkan base symbols create=%p gipa=%p gdpa=%p enumVer=%p enumExt=%p enumLayer=%p",
+		(void *)vkCreateInstance, (void *)vkGetInstanceProcAddr, (void *)vkGetDeviceProcAddr,
+		(void *)vkEnumerateInstanceVersion, (void *)vkEnumerateInstanceExtensionProperties, (void *)vkEnumerateInstanceLayerProperties);
 
 	if (vkCreateInstance && vkGetInstanceProcAddr && vkGetDeviceProcAddr && vkEnumerateInstanceExtensionProperties && vkEnumerateInstanceLayerProperties) {
 		INFO_LOG(Log::G3D, "VulkanLoad: Base functions loaded.");

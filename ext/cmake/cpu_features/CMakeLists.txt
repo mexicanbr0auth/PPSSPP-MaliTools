@@ -143,9 +143,7 @@ set (CPU_FEATURES_SRCS)
 add_cpu_features_headers_and_sources(CPU_FEATURES_HDRS CPU_FEATURES_SRCS)
 list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:utils>)
 if(NOT PROCESSOR_IS_X86 AND UNIX)
-  # Keep hwcaps in the cpu_features archive explicitly. With current Android NDK/CMake,
-  # the object-library generator expression can otherwise leave the symbol unresolved.
-  list(APPEND CPU_FEATURES_SRCS ${PROJECT_SOURCE_DIR}/../../cpu_features/src/hwcaps.c)
+  list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:unix_based_hardware_detection>)
 endif()
 add_library(cpu_features ${CPU_FEATURES_HDRS} ${CPU_FEATURES_SRCS})
 set_target_properties(cpu_features PROPERTIES PUBLIC_HEADER "${CPU_FEATURES_HDRS}")
